@@ -7,16 +7,14 @@ var path = require('path');
 var appDir = path.dirname(require.main.filename);
 console.log('app running in ', appDir);
 
-/*
-const app = feathers()
-  .configure(rest())
-  .configure(hooks())
-  // Needed for parsing bodies (login)
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-*/
-
 const app = express(feathers());
+
+// Enable CORS - https://github.com/feathersjs/docs/blob/master/guides/basics/clients.md#rest-client
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
