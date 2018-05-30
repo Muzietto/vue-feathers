@@ -1,0 +1,146 @@
+<html>
+
+<head>
+    <title>Vue.js Pet Depot</title>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/app.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="navbar navbar-default">
+                <h1>{{ sitename }}</h1>
+            </div>
+            <div class="nav navbar-nav navbar-right cart">
+                <span class="glyphicon glyphicon-shopping-cart">&nbsp;{{ cartCount }}</span>
+            </div>
+        </header>
+        <p>Welcome to {{sitename}}</p>
+
+        <main>
+            <div class="row product">
+                <div class="col">
+                    <figure>
+                        <img v-bind:src="product.image">
+                    </figure>
+                </div>
+                <div class="col col-expand">
+                    <h1 v-text="product.title"></h1>
+                    <p v-html="product.description"></p>
+                    <p class="price">{{ product.price | formatPrice }}</p>
+                </div>
+                <button class="default" v-on:click="addToCart">Add to cart</button>
+            </div>
+        </main>
+    </div>
+    <script type="text/javascript">
+        var APP_LOG_LIFECYCLE_EVENTS = true;
+
+        var webstore = new Vue({
+            el: '#app',
+            data: {
+                sitename: 'VUE PET DEPO',
+                product: {
+                    id: 1001,
+                    title: "Cat Food, 25lb bag",
+                    description: "A 25 pound bag of <em>irresistible</em>," +
+                        " organic goodness for your cat.",
+                    price: 2000,
+                    image: "assets/images/product-fullsize.png",
+                },
+                cart: [],
+            },
+            methods: {
+                addToCart: function() {
+                    this.cart.push(this.product.id);
+                }
+            },
+            computed: {
+                cartCount: function() {
+                    return this.cart.length;
+                }
+            },
+            filters: {
+                formatPrice: function(price) {
+                    if (!parseInt(price)) {
+                        return "";
+                    }
+                    if (price > 99999) {
+                        var priceString = (price / 100).toFixed(2);
+                        var priceArray = priceString.split("").reverse();
+                        var index = 3;
+                        while (priceArray.length > index + 3) {
+                            priceArray.splice(index + 3, 0, ",");
+                            index += 4;
+                        }
+                        return "$" + priceArray.reverse().join("");
+                    } else {
+                        return "$" + (price / 100).toFixed(2);
+                    }
+                }
+            },
+            beforeCreate: function() {
+                //#B
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("beforeCreate"); //#B
+                } //#B
+            },
+            //#B
+            created: function() {
+                //#C
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("created");
+                    //#C
+                } //#C
+            },
+            //#C
+            beforeMount: function() {
+                //#D
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("beforeMount"); //#D
+                } //#D
+            },
+            //#D
+            mounted: function() { //#E
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("mounted");
+                    //#E
+                } //#E
+            },
+            //#E
+            beforeUpdate: function() {
+                //#F
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("beforeUpdate");
+                } //#F
+            },
+            //#F
+            updated: function() { //#G
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("updated");
+                    //#G
+                } //#G
+            },
+            //#G
+            beforeDestroy: function() {
+                //#H
+                if (APP_LOG_LIFECYCLE_EVENTS) {
+                    console.log("beforeDestroy ");
+                } //#H
+            },
+            //#H
+            destroyed: function() {
+                    //#I
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("destroyed");
+                        //#I
+                    } //#I
+                }
+                //#I
+        });
+    </script>
+</body>
+
+</html>
