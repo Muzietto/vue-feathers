@@ -31,7 +31,11 @@
                     <p v-html="product.description"></p>
                     <p class="price">{{ product.price | formatPrice }}</p>
                 </div>
-                <button class="default" v-on:click="addToCart" v-show="isAvailable()">Add to cart</button>
+                <div class="rating">
+                    <span v-for="n in 5">☆</span>
+                </div>
+                <button class="default" v-on:click="addToCart" :disabled="isNotAvailable()">Add to cart</button>
+                <span v-if="almostGone">Only {{product.availableInventory}} left!!!</span>
             </div>
             <div v-else>
                 <div class="col-md-6">
@@ -42,134 +46,204 @@
                     <strong>Last Name:</strong>
                     <input v-model="order.lastName" class="form-control" />
                 </div>
+                <div class="form-group">
+                    <div class="col-md-12"><strong>Address:</strong></div>
+                    <div class="col-md-12">
+                        <input v-model="order.address" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12"><strong>City:</strong></div>
+                    <div class="col-md-12">
+                        <input v-model="order.city" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-2">
+                        <strong>State:</strong>
+                        <select v-model="order.state" class="form-control">
+                          <option disabled value="">State</option>
+                          <option>AL</option>
+                          <option>AR</option>
+                          <option>CA</option>
+                          <option>NV</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 col-md-offset-4">
+                        <strong>Zip / Postal Code:</strong>
+                        <input v-model="order.zip" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 boxes">
+                        <input type="checkbox" id="gift" value="true" v-bind:true-value="order.sendGift" v-bind:false-value="order.dontSendGift" v-model="order.gift">
+                        <label for="gift">Ship As Gift?</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 boxes">
+                        <input type="radio" id="home" value="Home" v-bind:value="order.home" v-model="order.method">
+                        <label for="home">Home</label>
+                        <input type="radio" id="business" value="Business" v-bind:value="order.business" v-model="order.method">
+                        <label for="business">Business</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary submit" v-on:click="submitForm">Place Order</button>
+                    </div>
+                </div>
                 <div class="col-md-12 verify">
                     <pre>
 First Name: {{order.firstName}}
 Last Name: {{order.lastName}}
+Address: {{order.address}}
+City: {{order.city}}
+Zip: {{order.zip}}
+State: {{order.state}}
+Gift: {{order.gift}}
+Method: {{order.method}}
                     </pre>
                 </div>
-            </div>
         </main>
-    </div>
-    <script type="text/javascript">
-        var APP_LOG_LIFECYCLE_EVENTS = true;
+        </div>
+        <script type="text/javascript">
+            var APP_LOG_LIFECYCLE_EVENTS = true;
 
-        var webstore = new Vue({
-            el: '#app',
-            data: {
-                showProduct: true,
-                order: {
-                    firstName: '',
-                    lastName: ''
+            var webstore = new Vue({
+                el: '#app',
+                data: {
+                    showProduct: true,
+                    order: {
+                        firstName: '',
+                        lastName: '',
+                        address: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                        gift: 'Send As A Gift',
+                        sendGift: 'Send As A Gift',
+                        dontSendGift: 'Do Not Send As A Gift',
+                        method: 'Home Address',
+                        business: 'Business Address',
+                        home: 'Home Address',
+                    },
+                    sitename: 'VUE PET DEPO',
+                    product: {
+                        id: 1001,
+                        title: "Cat Food, 25lb bag",
+                        description: "A 25 pound bag of <em>irresistible</em>," +
+                            " organic goodness for your cat.",
+                        price: 2000,
+                        image: "assets/images/product-fullsize.png",
+                        availableInventory: 5,
+                    },
+                    cart: [],
                 },
-                sitename: 'VUE PET DEPO',
-                product: {
-                    id: 1001,
-                    title: "Cat Food, 25lb bag",
-                    description: "A 25 pound bag of <em>irresistible</em>," +
-                        " organic goodness for your cat.",
-                    price: 2000,
-                    image: "assets/images/product-fullsize.png",
-                    availableInventory: 5,
+                methods: {
+                    addToCart: function() {
+                        this.cart.push(this.product.id);
+                        this.product.availableInventory--;
+                    },
+                    isNotAvailable: function() {
+                        return !(this.product.availableInventory > 0);
+                    },
+                    showCheckout() {
+                        this.showProduct = (!this.showProduct);
+                    },
+                    submitForm() {
+                        alert('Submitted');
+                    },
                 },
-                cart: [],
-            },
-            methods: {
-                addToCart: function() {
-                    this.cart.push(this.product.id);
-                    this.product.availableInventory--;
+                computed: {
+                    cartCount: function() {
+                        return this.cart.length;
+                    },
+                    almostGone: function() {
+                        return (this.cart.length - this.product.availableInventory > -1);
+                    },
                 },
-                isAvailable: function() {
-                    return (this.product.availableInventory > 0);
-                },
-                showCheckout() {
-                    this.showProduct = (!this.showProduct);
-                },
-            },
-            computed: {
-                cartCount: function() {
-                    return this.cart.length;
-                }
-            },
-            filters: {
-                formatPrice: function(price) {
-                    if (!parseInt(price)) {
-                        return "";
-                    }
-                    if (price > 99999) {
-                        var priceString = (price / 100).toFixed(2);
-                        var priceArray = priceString.split("").reverse();
-                        var index = 3;
-                        while (priceArray.length > index + 3) {
-                            priceArray.splice(index + 3, 0, ",");
-                            index += 4;
+                filters: {
+                    formatPrice: function(price) {
+                        if (!parseInt(price)) {
+                            return "";
                         }
-                        return "$" + priceArray.reverse().join("");
-                    } else {
-                        return "$" + (price / 100).toFixed(2);
+                        if (price > 99999) {
+                            var priceString = (price / 100).toFixed(2);
+                            var priceArray = priceString.split("").reverse();
+                            var index = 3;
+                            while (priceArray.length > index + 3) {
+                                priceArray.splice(index + 3, 0, ",");
+                                index += 4;
+                            }
+                            return "$" + priceArray.reverse().join("");
+                        } else {
+                            return "$" + (price / 100).toFixed(2);
+                        }
                     }
-                }
-            },
-            beforeCreate: function() {
-                //#B
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("beforeCreate"); //#B
-                } //#B
-            },
-            //#B
-            created: function() {
-                //#C
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("created");
-                    //#C
-                } //#C
-            },
-            //#C
-            beforeMount: function() {
-                //#D
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("beforeMount"); //#D
-                } //#D
-            },
-            //#D
-            mounted: function() { //#E
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("mounted");
-                    //#E
-                } //#E
-            },
-            //#E
-            beforeUpdate: function() {
-                //#F
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("beforeUpdate");
-                } //#F
-            },
-            //#F
-            updated: function() { //#G
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("updated");
-                    //#G
-                } //#G
-            },
-            //#G
-            beforeDestroy: function() {
-                //#H
-                if (APP_LOG_LIFECYCLE_EVENTS) {
-                    console.log("beforeDestroy ");
-                } //#H
-            },
-            //#H
-            destroyed: function() {
-                    //#I
+                },
+                beforeCreate: function() {
+                    //#B
                     if (APP_LOG_LIFECYCLE_EVENTS) {
-                        console.log("destroyed");
+                        console.log("beforeCreate"); //#B
+                    } //#B
+                },
+                //#B
+                created: function() {
+                    //#C
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("created");
+                        //#C
+                    } //#C
+                },
+                //#C
+                beforeMount: function() {
+                    //#D
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("beforeMount"); //#D
+                    } //#D
+                },
+                //#D
+                mounted: function() { //#E
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("mounted");
+                        //#E
+                    } //#E
+                },
+                //#E
+                beforeUpdate: function() {
+                    //#F
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("beforeUpdate");
+                    } //#F
+                },
+                //#F
+                updated: function() { //#G
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("updated");
+                        //#G
+                    } //#G
+                },
+                //#G
+                beforeDestroy: function() {
+                    //#H
+                    if (APP_LOG_LIFECYCLE_EVENTS) {
+                        console.log("beforeDestroy ");
+                    } //#H
+                },
+                //#H
+                destroyed: function() {
                         //#I
-                    } //#I
-                }
-                //#I
-        });
-    </script>
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("destroyed");
+                            //#I
+                        } //#I
+                    }
+                    //#I
+            });
+        </script>
 </body>
 
 </html>
