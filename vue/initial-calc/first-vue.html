@@ -14,13 +14,13 @@
                 <h1>{{ sitename }}</h1>
             </div>
             <div class="nav navbar-nav navbar-right cart">
+                <button type="button" class="btn btn-default btn-lg" v-on:click="showCheckout">
                 <span class="glyphicon glyphicon-shopping-cart">&nbsp;{{ cartCount }}</span>
+                Checkout</button>
             </div>
         </header>
-        <p>Welcome to {{sitename}}</p>
-
         <main>
-            <div class="row product">
+            <div class="row product" v-if="showProduct">
                 <div class="col">
                     <figure>
                         <img v-bind:src="product.image">
@@ -31,7 +31,23 @@
                     <p v-html="product.description"></p>
                     <p class="price">{{ product.price | formatPrice }}</p>
                 </div>
-                <button class="default" v-on:click="addToCart">Add to cart</button>
+                <button class="default" v-on:click="addToCart" v-show="isAvailable()">Add to cart</button>
+            </div>
+            <div v-else>
+                <div class="col-md-6">
+                    <strong>First Name:</strong>
+                    <input v-model="order.firstName" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <strong>Last Name:</strong>
+                    <input v-model="order.lastName" class="form-control" />
+                </div>
+                <div class="col-md-12 verify">
+                    <pre>
+First Name: {{order.firstName}}
+Last Name: {{order.lastName}}
+                    </pre>
+                </div>
             </div>
         </main>
     </div>
@@ -41,6 +57,11 @@
         var webstore = new Vue({
             el: '#app',
             data: {
+                showProduct: true,
+                order: {
+                    firstName: '',
+                    lastName: ''
+                },
                 sitename: 'VUE PET DEPO',
                 product: {
                     id: 1001,
@@ -49,13 +70,21 @@
                         " organic goodness for your cat.",
                     price: 2000,
                     image: "assets/images/product-fullsize.png",
+                    availableInventory: 5,
                 },
                 cart: [],
             },
             methods: {
                 addToCart: function() {
                     this.cart.push(this.product.id);
-                }
+                    this.product.availableInventory--;
+                },
+                isAvailable: function() {
+                    return (this.product.availableInventory > 0);
+                },
+                showCheckout() {
+                    this.showProduct = (!this.showProduct);
+                },
             },
             computed: {
                 cartCount: function() {
