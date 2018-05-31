@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+
+<div id="app">
+  <form-component v-bind:authorzz="authorLabel" v-bind:titlezz="titleLabel">
+    <h1>{{header}}</h1>
+  </form-component>
+</div>
+
+<script>
+const FormComponent = { // <slot> will contain the markup @line 10
+  template: `
+    <div>
+    <slot></slot>
+      <form>
+        <label for="title">{{titlezz}}</label>
+        <input id="title" type="text" /><br/>
+        <label for="author">{{authorzz}}</label>
+        <input id="author" type="text" /><br/>
+        <button>Submit</button>
+      </form>
+    </div>
+  `,
+  props: ['titlezz', 'authorzz']
+};
+new Vue({
+  el: '#app',
+  components: {'form-component': FormComponent},
+  data() {
+    return {
+      titleLabel: 'The Title:',
+      authorLabel: 'The Author:',
+      header: 'Cipputi Here...',
+    };
+  },
+});
+</script>
+</body>
+</html>
