@@ -203,6 +203,7 @@ Method: {{order.method}}
                         console.log("created");
                     }
                     
+                    // NB - this one is the gist of the whole experiment!!
                     window.restClient
                       .get('products.json', {$limit: 2})
                       .then(data => {
