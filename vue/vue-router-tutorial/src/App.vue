@@ -10,4 +10,6 @@
 </script>
  
 <style>
+  a { color: white; }
+  a:hover { color: #DDDDDD; }
 </style>
