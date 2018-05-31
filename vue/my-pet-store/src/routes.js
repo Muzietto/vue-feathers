@@ -1,5 +1,6 @@
 import Main from './components/Main';
 import Form from './components/Form';
+import Product from './components/Product';
  
 export const routes = [
     {
@@ -12,6 +13,12 @@ export const routes = [
       path: '/form',
       name: 'Form',
       component: Form,
+      props: true,
+    },
+    {
+      path: '/product/:id',
+      name: 'Id',
+      component: Product,
       props: true,
     },
 ];
