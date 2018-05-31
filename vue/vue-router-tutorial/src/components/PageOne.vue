@@ -14,6 +14,6 @@
             return {
                 id: this.$route.params.id,
             }
-        }
+        },
     }
 </script>

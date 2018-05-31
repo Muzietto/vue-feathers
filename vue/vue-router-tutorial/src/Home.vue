@@ -5,7 +5,7 @@
         <hr class="my-4">
         <p>This text is not important, but thanks for reading it.</p>
         <a class="btn btn-primary btn-lg" role="button"><router-link to="/page-one/cippirimerlo">Click for Page 1</router-link></a>
-        <a class="btn btn-secondary btn-lg" role="button"><router-link to="/page-two">Click for Page 2</router-link></a>
+        <a class="btn btn-secondary btn-lg" role="button"><router-link to="/page-two?status=awesome">Click for Page 2</router-link></a>
     </div>
 </template>
  
