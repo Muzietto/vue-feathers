@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+<div id="app">
+<my-counter text="firsto" increment="1"></my-counter>
+<my-counter text="twotho" increment="2"></my-counter>
+<my-counter text="thirdo" increment="3"></my-counter>
+</div>
+<script>
+//const counter = {counter: 0};
+const MyCounter = {
+  template: '<div>Hello {{text}}! Increment is {{increment}}.<button v-on:click="handler">{{counter}}</button></div>',
+  props: ['text', 'increment'],
+  data() {
+    return {
+      counter: 0,
+    };
+  },
+  methods: {
+    handler() {
+      this.counter += parseInt(this.increment, 10);
+    },
+  },
+};
+
+new Vue({
+el: "#app",
+components: {'my-counter': MyCounter},
+});
+</script>
+</html>
