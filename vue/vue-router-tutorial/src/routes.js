@@ -4,6 +4,6 @@ import PageTwo from './components/PageTwo';
  
 export const routes = [
     {path: '/', component: Home},
-    {path: '/page-one', component: PageOne},
+    {path: '/page-one/:id', component: PageOne},
     {path: '/page-two', component: PageTwo},
 ];

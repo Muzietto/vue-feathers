@@ -5,7 +5,7 @@
                 <router-link to="/" class="nav-link" active-class="active" exact style="cursor: pointer">Home</router-link>
             </li>
             <li class="nav-item">
-                <router-link to="/page-one" class="nav-link" active-class="active" style="cursor: pointer">Page One</router-link>
+                <router-link to="/page-one/17" class="nav-link" active-class="active" style="cursor: pointer">Page One</router-link>
             </li>
             <li class="nav-item">
                 <router-link to="/page-two" class="nav-link" active-class="active" style="cursor: pointer">Page Two</router-link>
