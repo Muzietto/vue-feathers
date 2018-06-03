@@ -1,6 +1,13 @@
 {
 "users":[
 {
+"email": "marco_faustinelli@yahoo.com",
+"name": "Marchino",
+"role": "admin",
+"password": "qwe123",
+"image": ""
+},
+{
 "email": "adam@admin.com",
 "name": "Adam Admin",
 "role": "admin",
