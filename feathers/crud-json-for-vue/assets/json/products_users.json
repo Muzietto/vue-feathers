@@ -1,17 +1,17 @@
 {
 "users":[
 {
-"id": 101,
+"email": "adam@admin.com",
 "name": "Adam Admin",
 "role": "admin",
-"password": "qwe123",
-"image": "assets/images/adam.jps"
+"password": "adam",
+"image": "assets/images/adam.jpg"
 },
 {
-"id": 102,
+"email": "hugh@user.com",
 "name": "Hugh User",
 "role": "user",
-"password": "asdzxc",
+"password": "hugh",
 "image": "assets/images/hugh.jpg"
 }
 ],

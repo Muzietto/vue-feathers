@@ -1,28 +1,34 @@
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const memory = require('feathers-memory');
-const jsonProducts = require('./src/products_users.json').products;
-const jsonUsers = require('./src/products_users.json').users;
-console.log(jsonProducts);
-console.log(jsonUsers);
+const auth = require('@feathersjs/authentication');
+const local = require('@feathersjs/authentication-local');
+const jwt = require('@feathersjs/authentication-jwt');
+
+const jsonProducts = require('./assets/json/products_users.json').products;
+const jsonUsers = require('./assets/json/products_users.json').users;
 
 const app = express(feathers());
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+// Enable CORS - https://github.com/feathersjs/docs/blob/master/guides/basics/clients.md#rest-client
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
 
 app.configure(express.rest());
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.configure(auth({ secret: 'supersecret' }));
+app.configure(local());
+app.configure(jwt());
+// .use('/', feathers.static(__dirname + '/public'))
 
 app.use(express.errorHandler());
 app.use(myLogger);
 
-app.use('users', memory({
-  paginate: {
-    default: 10,
-    max: 25,
-  },
-}));
-
+app.use('users', memory());
 app.use('products', memory({
   paginate: {
     default: 10,
@@ -48,13 +54,31 @@ app.service('users').hooks({
     console.error(`Error in '${context.path}' service method '${context.method}'`, context.error.stack);
   },
   before: {
-    create: [addCreatedAt, validateUserAtCreation],
+    find: [auth.hooks.authenticate('jwt')],
+    create: [
+      addCreatedAt, 
+      local.hooks.hashPassword({ passwordField: 'password' }),
+      validateUserAtCreation, 
+    ],
     update: [],
     patch: [],
   },
   after: {
-    get: [filterUsersByUser],
+    find: [local.hooks.protect('password'), filterUsersByUser], 
+    get: [local.hooks.protect('password'), filterUsersByUser],
   }});
+
+app.service('authentication').hooks({
+ before: {
+  create: [
+   // You can chain multiple strategies
+   auth.hooks.authenticate(['jwt', 'local'])
+  ],
+  remove: [
+   auth.hooks.authenticate('jwt')
+  ]
+ }
+});
 
 async function addCreatedAt(context) {
   context.data.createdAt = new Date();
@@ -80,14 +104,15 @@ async function validateProductAtCreation(context) {
 async function validateUserAtCreation(context) {
   const {data} = context;
 
-  if (!data.name || !data.role) {
-    throw new Error('username+role must be provided');
+  console.log('new user', data);
+
+  if (!data.name || !data.role || !data.password || !data.email) {
+    throw new Error('username+role+email+password must be provided');
   }
 
   data.id = Math.floor(Math.random()*1000000);
-  data.password = data.password || 'cip';
   data.image = data.image || '/assets/images/placeholder.jpg';
-  
+
   return context;
 }
 
