@@ -14,7 +14,7 @@ app.configure(express.rest());
 app.use(express.errorHandler());
 app.use(myLogger);
 
-app.use('messages', memory({
+app.use('/messages', memory({
   paginate: {
     default: 10,
     max: 25,
@@ -45,8 +45,8 @@ async function validate(context) {
   return context;
 }
 
-const server = app.listen(3031)
-  .on('listening', () => {console.log('REST API started at 3031')});
+const server = app.listen(3051)
+  .on('listening', () => {console.log('REST API started at 3051')});
 
 jsonData.messages.forEach(msg => {
   loadMessage(msg);
