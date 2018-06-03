@@ -10,6 +10,12 @@ export const routes = [
       component: Products,
       props: true,
     },
+//    {
+//      path: '/authenticate',
+//      name: 'Authenticate',
+//      component: Products,
+//      props: true,
+//    },
     {
       path: '/products',
       name: 'Products',

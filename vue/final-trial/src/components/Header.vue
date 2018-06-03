@@ -7,26 +7,42 @@
       </h1>
     </div>
     <div class="nav navbar-nav navbar-right cart">
-      <button type="button" class="btn btn-default btn-lg" v-on:click="showCheckout">
-        <span class="glyphicon glyphicon-shopping-cart">{{cartItemCount}}</span> Checkout
-      </button>
+        <login-form :registerCurrentUser="registerCurrentUser" v-show="!currentUser"></login-form>
+        <div v-show="currentUser">
+          <label>LOGGED</label>
+          <button type="button" class="btn btn-default btn-lg" v-on:click="logout">
+            <span class="glyphicon glyphicon-shopping-cart">LOG OUT</span>
+          </button>
+        </div>
     </div>
   </div>
 </header>
 </template>
 
 <script>
+  import LoginForm from './LoginForm.vue';
   export default {
     name: 'my-header',
+    components: {LoginForm},
     data () {
       return {
-        sitename: "Vue.js Pet Depot",
+        sitename: "Vue.js Final Trial",
+        currentUser: '',
       };
     },
-    props: ['cartItemCount'],
+    computed: {
+    },
+    props: [],
     methods: {
-      showCheckout() {
-        this.$router.push({name: 'Form'});
+      logout() { 
+        window.feathersClient
+          .logout().then(data => {
+            window.feathersClient.set('user', undefined);
+            this.currentUser = '';
+          });
+      },
+      registerCurrentUser(newUser) { 
+        this.currentUser = newUser;
       },
     },
   };
