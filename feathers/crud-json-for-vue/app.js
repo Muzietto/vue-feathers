@@ -92,7 +92,7 @@ async function validateProductAtCreation(context) {
     throw new Error('product title must be provided');
   }
 
-  data.id = Math.floor(Math.random()*1000000);
+  data.id = Math.floor(Math.random() * 1000000);
   data.description = data.description || data.title;
   data.price = data.price || 100;
   data.availableInventory = data.availableInventory || 100;
@@ -110,7 +110,7 @@ async function validateUserAtCreation(context) {
     throw new Error('username+role+email+password must be provided');
   }
 
-  data.id = Math.floor(Math.random()*1000000);
+  data.id = Math.floor(Math.random() * 1000000);
   data.image = data.image || '/assets/images/placeholder.jpg';
 
   return context;
